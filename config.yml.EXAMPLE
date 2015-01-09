@@ -1,0 +1,11 @@
+# Settings of the email account used to send and receive the emails
+email_server:
+    smtp_server: "smtp.gmail.com:587"
+    username: "<username>"
+    password: "<password>"
+    sender_name: "<name of the sender>"
+    sender_email: "<email address of the sender>"
+
+# Time when the survey and the digest are sent
+survey_time: "4 PM"
+digest_time: "9 AM"

@@ -2,10 +2,12 @@ Hi {:s},
 
 Reply to this email and tell us what you did today ({:s}). Your reply will be delivered tomorrow at {:s}.
 
-Guidelines:
-- It should be easy to read and very brief, preferably by items.
+Notes:
+- It should be brief, preferably by items.
 - Refer any success or difficulty that you had.
-- It should take less than 60 seconds to read.
+- It should take less than 60 seconds to read and 10 minutes to write.
+- If you send more than one reply, only the last one is considered.
+- Lines starting with > and empty lines are ignored.
 
 Thank you.
 

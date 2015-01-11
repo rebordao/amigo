@@ -1,0 +1,26 @@
+# Team Name, rename this file with the same name of the team
+team_name: '<name of the team>'
+
+# Team Leader
+team_leader:
+  name: '<name of the team leader>'
+  email: '<email of the team leader>'
+
+# Team Members
+members:
+  - name: '<name of member1>'
+    email: '<email address of member1>'
+    availability:
+      - 'Monday'
+      - 'Tuesday'
+      - 'Wednesday'
+      - 'Thursday'
+      - 'Friday'
+  - name: '<name of member2>'
+    email: '<email address of member2>'
+    availability:
+      - 'Monday'
+      - 'Tuesday'
+      - 'Wednesday'
+      - 'Thursday'
+      - 'Friday'

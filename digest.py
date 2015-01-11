@@ -4,45 +4,44 @@ This script builds and sends the survey to all the lists' members.
 '''
 
 import os
-import csv
-import yaml
-import datetime
-import time
-import email
 import re
+import yaml
+import time
+import datetime
+import email
 import smtplib
 import imaplib
 
 from email.mime.text import MIMEText
 from email.header import Header
 
-def open_smtp_conn(email_cfg, verbose = True):
+def open_smtp_conn(email_cfg):
     '''
     Opens SMTP connection.
     '''
 
     # Creates SMTP connection
-    if verbose: print "Connecting to SMTP server..."
+    print "Connecting to SMTP server..."
     conn = smtplib.SMTP(email_cfg['smtp_server'])
     conn.starttls()
 
     # Log in
-    if verbose: print "Logging in as {:s}".format(email_cfg['username'])
+    print "Logging in as {:s}".format(email_cfg['username'])
     conn.login(email_cfg['username'], email_cfg['password'])
 
     return(conn)
 
-def open_imap_conn(email_cfg, verbose = True):
+def open_imap_conn(email_cfg):
     '''
     Opens IMAP connection.
     '''
 
     # Creates IMAP connection
-    if verbose: print "Connecting to IMAP server..."
+    print "Connecting to IMAP server..."
     conn = imaplib.IMAP4_SSL('imap.gmail.com')
 
     # Log in
-    if verbose: print "Logging in as {:s}".format(email_cfg['username'])
+    print "Logging in as {:s}".format(email_cfg['username'])
     conn.login(email_cfg['username'], email_cfg['password'])
     conn.list()
 
@@ -51,21 +50,28 @@ def open_imap_conn(email_cfg, verbose = True):
 
     return(conn)
 
-def parse_raw_email(email_instance):
+def remove_empty_lines(txt):
     '''
-    Parses a raw message instance..
+    Removes empty lines from a text.
     '''
 
-    maintype = email_instance.get_content_maintype()
+    return re.sub("\n\s*\n*", "\n", txt)
+
+def parse_raw_email(raw_email):
+    '''
+    Parses a raw message instance.
+    '''
+
+    maintype = raw_email.get_content_maintype()
 
     if maintype == 'multipart':
-        for part in email_instance.get_payload():
+        for part in raw_email.get_payload():
             if part.get_content_maintype() == 'text':
                 return part.get_payload()
     elif maintype == 'text':
-        return(email_instance.get_payload())
+        return(raw_email.get_payload())
 
-def get_raw_emails(email_cfg, list_name):
+def get_raw_emails(*args):
     '''
     Reads yesterday's replyies.
     '''
@@ -90,7 +96,7 @@ def get_raw_emails(email_cfg, list_name):
 
     return(raw_emails)
 
-def build_digest(cfg, members, list_name):
+def build_digest(*args):
     '''
     Builds digest.
     '''
@@ -105,9 +111,6 @@ def build_digest(cfg, members, list_name):
                 parse_raw_email(raw_email)) + '\n'
 
     return(digest)
-
-def remove_empty_lines(txt):
-    return re.sub("\n\s*\n*", "\n", txt)
 
 def clean_digest(digest):
     '''
@@ -129,35 +132,37 @@ if __name__ == '__main__':
     # Opens connection to smtp server
     smtp_conn = open_smtp_conn(email_cfg = cfg['email_cfg'])
 
-    for list_name in os.listdir(os.path.join(os.getcwd(), 'lists')):
+    # Sends survey to all teams
+    for file_name in os.listdir(os.path.join(os.getcwd(), 'lists')):
 
-        # Loads list_name's members, skips header
-        list_file = os.path.join(os.getcwd(), 'lists', list_name)
-        members = [member for member in csv.reader(open(list_file, 'rb'))][1:]
+        # Reads team's metadata
+        team_file = os.path.join(os.getcwd(), 'lists', file_name)
+        team = yaml.load(open(team_file, 'r'))
 
         # Builds digest
-        digest = build_digest(cfg, members, list_name)
+        digest = build_digest(cfg, team)
 
         # Cleans digest
         digest = clean_digest(digest)
 
         # Builds subject of yesterday
         yesterday = datetime.date.today() - datetime.timedelta(days = 1)
-        subject = "Digest {:s} | {:s}".format(
-                yesterday.strftime('%d-%m-%Y'), list_name[:-4])
+        subject = "Digest | {:s} | {:s}".format(
+                yesterday.strftime('%d-%m-%Y'), team['team_name'])
 
-        # Sends digest
-        for member in members:
+        # Sends digest to team
+        print "Processing team '{:s}'".format(team['team_name'])
+        for member in team['members']:
 
-            # Creates digest's email
+            # Creates email headers
             email = MIMEText(digest, 'plain', 'utf-8')
             email['Subject'] = Header(subject, 'utf-8')
             email['From'] = Header(cfg['email_cfg']['sender_name'], 'utf-8')
-            email['To'] = Header(member[1], 'utf-8')
+            email['To'] = Header(member['name'], 'utf-8')
 
             # Sends email
             smtp_conn.sendmail(from_addr = cfg['email_cfg']['sender_name'],
-                    to_addrs = member[1], msg = email.as_string())
+                    to_addrs = member['email'], msg = email.as_string())
             time.sleep(3)
 
         smtp_conn.quit()

@@ -4,7 +4,7 @@ email_server:
     username: "<username>"
     password: "<password>"
     sender_name: "<name of the sender>"
-    sender_email: "<email address of the sender>"
+    sender_email: "<email of the sender>"
 
 # Time when the survey and the digest are sent
 survey_time: "4 PM"

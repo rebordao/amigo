@@ -5,7 +5,7 @@ Reply to this email and tell us what you did today ({:s}). Your reply will be de
 Notes:
 - It should be brief, preferably by items.
 - Refer any success or difficulty that you had.
-- It should take less than 60 seconds to read and 10 minutes to write.
+- It should take less than 30 seconds to read and 10 minutes to write.
 - If you send more than one reply, only the last one is considered.
 - Empty lines and lines starting with > are ignored.
 

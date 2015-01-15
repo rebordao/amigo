@@ -1,4 +1,4 @@
-# Team Name, rename this file with the same name of the team
+# Team Name, rename this file with the name of the team
 team_name: '<name of the team>'
 
 # Team Leader
@@ -18,6 +18,14 @@ members:
       - 'Friday'
   - name: '<name of member2>'
     email: '<email address of member2>'
+    availability:
+      - 'Monday'
+      - 'Tuesday'
+      - 'Wednesday'
+      - 'Thursday'
+      - 'Friday'
+  - name: '<name of member3>'
+    email: '<email of member3>'
     availability:
       - 'Monday'
       - 'Tuesday'

@@ -8,7 +8,6 @@ import yaml
 import time
 import datetime
 import smtplib
-import email
 
 from email.mime.text import MIMEText
 
@@ -33,9 +32,11 @@ def ask_survey(verbose = True, *args):
     Sends survey to all team members.
     '''
 
-    # Loads template
-    today = datetime.datetime.today().strftime('%d-%m-%Y')
+    # Loads survey's template
     body = open('templates/dev_team.txt', 'rb').read()
+
+    # Creates survey's subject
+    today = datetime.datetime.today().strftime('%d-%m-%Y')
     subject = "Today's Survey | {:s} | {:s}".format(today, team['team_name'])
 
     if verbose: print "Sending survey to team '{:s}'".format(team['team_name'])

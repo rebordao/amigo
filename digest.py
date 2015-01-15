@@ -78,7 +78,7 @@ def get_raw_emails(verbose = True, *args):
     # Opens IMAP conn
     imap_conn = open_imap_conn(cfg['email_cfg'])
 
-    # Builds subject of yesterday
+    # Creates subject of yesterday
     yesterday = datetime.date.today() - datetime.timedelta(days = 1)
     subject = "{:s} | {:s}".format(
             yesterday.strftime('%d-%m-%Y'), team['team_name'])
@@ -103,7 +103,7 @@ def build_digest(*args):
     '''
 
     # Gets raw emails
-    raw_emails = get_raw_emails(cfg['email_cfg'], team)
+    raw_emails = get_raw_emails(cfg, team)
 
     # Aggregates them into one digest
     digest = ''
@@ -117,16 +117,21 @@ def build_digest(*args):
 
     return(digest)
 
-def clean_digest(digest, verbose = True):
+def clean_digest(verbose = True, *args):
     '''
-    Preprocess digest.
+    Cleans digest.
     '''
 
     if verbose: print "Cleaning emails"
+
+    # Cleans the digest by removing quoted lines, etc
+    # !!! You may need to edit this method to adapt it to your needs !!!
     clean_digest = ''
+    sender = '{:s} <{:s}>'.format(
+        cfg['email_cfg']['sender_name'], cfg['email_cfg']['sender_email'])
     for line in digest.splitlines():
-        if (not line.startswith('>') and
-                not "Amigo <reminder@mentis-consulting.be>" in line):
+        if (not line.startswith('>') and not sender in line and
+            not "wrote:" in line):
             clean_digest += '\n' + line
 
     return(clean_digest)
@@ -141,8 +146,8 @@ def add_missing_members(team, digest):
     for member in team['members']:
         if (yesterday.strftime("%A") in member['availability'] and
                 not member['email'] in digest):
-            digest += "\n{:s} <{:s}>".format(
-                member['name'], member['email']) + "\nDid not reply to the survey.\n"
+            recipient = "\n{:s} <{:s}>".format(member['name'], member['email'])
+            digest +=  recipient + "\nDid not reply to the survey.\n"
     return(digest)
 
 if __name__ == '__main__':
@@ -171,7 +176,7 @@ if __name__ == '__main__':
         digest = build_digest(cfg, team)
 
         # Cleans digest
-        digest = clean_digest(digest)
+        digest = clean_digest(cfg, digest)
 
         # Adding members that didn't reply
         digest = add_missing_members(team, digest)
@@ -188,17 +193,15 @@ if __name__ == '__main__':
         for member in members:
 
             # Creates email headers
-            dig_email = MIMEText(digest, 'plain', 'utf-8')
-            dig_email['Subject'] = subject
-            dig_email['From'] = "'{:s}' <{:s}>".format(
-                cfg['email_cfg']['sender_name'], cfg[
-                'email_cfg']['sender_email'])
-            dig_email['To'] = "'{:s}' <{:s}>".format(
-                    member['name'], member['email'])
+            ema = MIMEText(digest, 'plain', 'utf-8')
+            ema['Subject'] = subject
+            ema['From'] = "'{:s}' <{:s}>".format(
+                cfg['email_cfg']['sender_name'], cfg['email_cfg']['sender_email'])
+            ema['To'] = "'{:s}' <{:s}>".format(member['name'], member['email'])
 
             # Sends email
             smtp_conn.sendmail(from_addr = cfg['email_cfg']['sender_name'],
-                    to_addrs = member['email'], msg = dig_email.as_string())
+                    to_addrs = member['email'], msg = ema.as_string())
             time.sleep(3)
 
     smtp_conn.quit()

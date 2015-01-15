@@ -9,12 +9,13 @@ shared within the team next day at 9 AM.
 
 ## Notes
 
-About the survey’s reply:
+The survey’s reply:
 
 - should be brief, preferably by items;
 - should refer any success or difficulty faced during the tasks;
-- should take less than 30 seconds to read and 10 minutes to write;
+- ideally takes less than 30 seconds to read and 8 minutes to write;
 - if a team member sends more than one reply, only the last one is considered;
+- needs to be sent from the same email address where it was received;
 - empty lines and lines starting with > are ignored.
 
 ## Setup

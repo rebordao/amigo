@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 '''
 This script sends a survey to all the lists' members.
 '''
@@ -11,35 +11,35 @@ import smtplib
 
 from email.mime.text import MIMEText
 
-def open_smtp_conn(email_cfg, verbose = True):
+def open_smtp_conn(email):
     '''
     Opens SMTP connection.
     '''
 
     # Creates SMTP connection
-    if verbose: print "Connecting to SMTP server"
-    conn = smtplib.SMTP(email_cfg['smtp_server'])
+    print("Connecting to SMTP server")
+    conn = smtplib.SMTP(email['smtp_server'])
     conn.starttls()
 
     # Log in
-    if verbose: print "Logging in as '{:s}'".format(email_cfg['username'])
-    conn.login(email_cfg['username'], email_cfg['password'])
+    print("Logging in as '{:s}'".format(email['username']))
+    conn.login(email['username'], email['password'])
 
     return(conn)
 
-def ask_survey(verbose = True, *args):
+def sends_survey(*args):
     '''
     Sends survey to all team members.
     '''
 
     # Loads survey's template
-    body = open('templates/dev_team.txt', 'rb').read()
+    body = open('templates/dev_team.txt', 'rb').read().decode('utf-8')
 
     # Creates survey's subject
     today = datetime.datetime.today().strftime('%d-%m-%Y')
     subject = "Today's Survey | {:s} | {:s}".format(today, team['team_name'])
 
-    if verbose: print "Sending survey to team '{:s}'".format(team['team_name'])
+    print("Sending survey to team '{:s}'".format(team['team_name']))
     for member in team['members']:
 
         # Creates survey's email
@@ -47,13 +47,15 @@ def ask_survey(verbose = True, *args):
         survey = MIMEText(email_body, 'plain', 'utf-8')
         survey['Subject'] = subject
         survey['From'] = "'{:s}' <{:s}>".format(
-            cfg['email_cfg']['sender_name'], cfg['email_cfg']['sender_email'])
+            cfg['sender_name'], cfg['sender_email'])
         survey['To'] = "'{:s}' <{:s}>".format(member['name'], member['email'])
 
         # Sends email according to the member's availability
         if datetime.datetime.today().strftime("%A") in member['availability']:
-            smtp_conn.sendmail(from_addr = survey['From'],
-                    to_addrs = member['email'], msg = survey.as_string())
+            smtp_conn.sendmail(
+                from_addr = survey['From'],
+                to_addrs = member['email'],
+                msg = survey.as_string())
             time.sleep(3)
 
 if __name__ == '__main__':
@@ -65,7 +67,7 @@ if __name__ == '__main__':
     cfg = yaml.load(open('config.yml', 'rb'))
 
     # Opens connection to smtp server
-    smtp_conn = open_smtp_conn(cfg['email_cfg'])
+    smtp_conn = open_smtp_conn(cfg)
 
     # Sends survey to all teams
     for file_name in os.listdir(os.path.join(os.getcwd(), 'lists')):
@@ -79,6 +81,7 @@ if __name__ == '__main__':
         team = yaml.load(open(team_file, 'rb'))
 
         # Sends survey to all members of the team
-        ask_survey(cfg, smtp_conn, team)
+        sends_survey(cfg, smtp_conn, team)
 
     smtp_conn.quit()
+

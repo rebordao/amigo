@@ -2,10 +2,11 @@
 
 ## Description
 
-This tool helps synchronizing a team, promotes transparency and communication.
-It emails your team at 4 PM, each member replies describing what he/she did 
-during the day, then those replies will be aggregated into a digest and 
-shared within the team next day at 9 AM.
+This tool can be used to do daily status updates by email.
+
+It works by emailing your team at 4 PM and each member replies
+describing what he/she did during the day. Those replies will
+be aggregated into a digest and shared within the team next day at 9.30 AM.
 
 ## Notes
 
@@ -13,7 +14,7 @@ The survey’s reply:
 
 - should be brief, preferably by items;
 - should refer any success or difficulty faced during the tasks;
-- ideally takes less than 30 seconds to read and 8 minutes to write;
+- ideally only takes a few seconds to read;
 - if a team member sends more than one reply, only the last one is considered;
 - needs to be sent from the same email address where it was received;
 - empty lines and lines starting with > are ignored.
@@ -21,13 +22,13 @@ The survey’s reply:
 
 ## Setup
 
-1. Set up your SMTP and IMAP server by filling in the file `cfg.yml.EXAMPLE`. 
+1. Set up your SMTP and IMAP server by filling in the file `cfg.yml.EXAMPLE`.
 Then rename it as `cfg.yml`.
-2. For each team create a yaml file that follows the template's structure 
+2. For each team create a yaml file that follows the template's structure
 defined in `templates/dev_team.yml.EXAMPLE`. Instead `dev_team` use the name
 of your team. In this file define each member's name, email and availability.
-3. Test if the files can be executed by running them directly (`./survey.py` 
-and `./digest.py`). You may need to change its permissions by 
+3. Test if the files can be executed by running them directly (`./survey.py`
+and `./digest.py`). You may need to change its permissions by
 
   > `sudo chmod 755 survey.py digest.py`
 
@@ -37,14 +38,14 @@ and `./digest.py`). You may need to change its permissions by
 
   and add to the end of the `crontab` the following lines:
 
-  > `0 16 * * 1-5 /path to survey.py`  
-  > `0 9 * * 2-6 /path to digest.py`
+  > `0 16 * * 1-5 /path to survey.py`
+  > `0 9 30 * 2-6 /path to digest.py`
 
-  This sends the survey every weekday, and the digest on the days when the 
+  This sends the survey every weekday, and the digest on the days when the
   previous day was a weekday (Tuesday, Wednesday, Thursday, Friday, Saturday).
 
-The team leader by default doesn't receive the survey, just the digest. To 
-overcome this use a dummy email for the team leader's email and add him/her 
+By default the team leader doesn't receive the survey, just the digest. To
+overcome this use a dummy email for the team leader's email and add him/her
 as a regular team member.
 
 ## Dependencies

@@ -9,6 +9,7 @@ Notes:
 - If you send more than one reply, only the last one is considered.
 - Needs to be sent from the same email address where you received it.
 - Empty lines and lines starting with > are ignored.
+- Remove signatures if you don't want them in the digest.
 
 Thank you.
 

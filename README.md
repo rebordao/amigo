@@ -17,6 +17,7 @@ The survey’s reply:
 - if a team member sends more than one reply, only the last one is considered;
 - needs to be sent from the same email address where it was received;
 - empty lines and lines starting with > are ignored.
+- signatures need to be removed to avoid being included in the digest.
 
 ## Setup
 

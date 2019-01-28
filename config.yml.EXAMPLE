@@ -1,5 +1,5 @@
 # Settings of the email account used to send and receive the emails
-email_server:
+email:
     smtp_server: "smtp.gmail.com:587" # gmail's smtp server
     username: "<username>"
     password: "<password>"

@@ -30,11 +30,8 @@ of your team. In this file define each member's name, email and availability.
 1. Test if the files can be executed by running them directly (`./survey.py`
 and `./digest.py`). You may need to change its permissions by
   > `sudo chmod 755 survey.py digest.py`
-1. Now add two cronjobs, one for the survey and another for the digest.
-
-  > crontab -e
-
-  and add to the end of the `crontab` the following lines:
+1. Deploy the code in a serverless setup either in Google Cloud
+or AWS with two cronjobs, one for the survey and another for the digest.
 
   > `0 16 * * 1-5 /path to survey.py`
   > `0 9 30 * 2-6 /path to digest.py`
@@ -48,7 +45,14 @@ as a regular team member.
 
 ## Dependencies
 
-Our production system is a Debian Stable LTS and we had `pyaml` as a dependency.
+Environmental variables:
+
+AMIGO_EMAIL_SERVER:
+AMIGO_USERNAME:
+AMIGO_PASSWORD:
+
+AMIGO_SMTP_PORT: 465
+AMIGO_IMAP_PORT: 993
 
 ## License
 

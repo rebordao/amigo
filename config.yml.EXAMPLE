@@ -1,7 +1,0 @@
-# Settings of the email account used to send and receive the emails
-smtp_server: "smtp.gmail.com:587" # gmail's smtp server
-imap_server: "mail.exclusivehosting.net"
-username: "<username>"
-password: "<password>"
-sender_name: "Amigo"
-sender_email: "<email of the sender>"

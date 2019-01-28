@@ -2,45 +2,56 @@
 '''
 This script builds and sends the survey to all the lists' members.
 '''
-
 import os
-import re
-import yaml
-import time
-import datetime
-import email
+import logging
+from typing import Dict
+# import re
+# import yaml
+# import time
+# import datetime
+# import email
 import smtplib
-import imaplib
+# import imaplib
 
-from email.mime.text import MIMEText
+# from email.mime.text import MIMEText
 
-def open_smtp_conn(cfg):
-    '''
-    Opens SMTP connection.
-    '''
 
-    # Creates SMTP connection
-    print("Connecting to SMTP server")
-    conn = smtplib.SMTP(cfg['smtp_server'])
+def cfg() -> Dict:
+    """
+    Returns a configuration object needed to access the email server.
+    """
+    return {
+       'email_server': os.getenv('AMIGO_EMAIL_SERVER'),
+       'smtp_port': str(os.getenv('AMIGO_SMTP_PORT')),
+       'imap_port': str(463),
+       'username': os.getenv('AMIGO_USERNAME'),
+       'password': os.getenv('AMIGO_PASSWORD')
+    }
+
+def open_email_conn(cfg: Dict):
+    """
+    Returns a SMTP connection.
+    """
+    logging.info("Connecting to SMTP server")
+    smtp_url = cfg['email_server'] + ':' + cfg['smtp_port']
+    conn = smtplib.SMTP(smtp_url)
     conn.starttls()
 
-    # Log in
-    print("Logging in as '{:s}'".format(cfg['username']))
+    logging.info("Logging in as '{:s}'".format(cfg['username']))
     conn.login(cfg['username'], cfg['password'])
 
-    return(conn)
+    return conn
 
 def open_imap_conn(cfg):
     '''
     Opens IMAP connection.
     '''
-
     # Creates IMAP connection
-    print("Connecting to IMAP server")
+    logging.info("Connecting to IMAP server")
     conn = imaplib.IMAP4_SSL(cfg['imap_server'])
 
     # Log in
-    print("Logging in as '{:s}'".format(cfg['username']))
+    logging.info("Logging in as '{:s}'".format(cfg['username']))
     conn.login(cfg['username'], cfg['password'])
     conn.list()
 
@@ -53,14 +64,12 @@ def remove_empty_lines(txt):
     '''
     Removes empty lines from a text.
     '''
-
     return re.sub("\n\s*\n*", "\n", txt)
 
 def parse_raw_email(raw_email):
     '''
     Parses a raw message instance.
     '''
-
     maintype = raw_email.get_content_maintype()
 
     if maintype == 'multipart':
@@ -74,7 +83,6 @@ def get_raw_emails(*args):
     '''
     Reads yesterday's replies.
     '''
-
     # Opens IMAP conn
     imap_conn = open_imap_conn(cfg)
 
@@ -87,7 +95,7 @@ def get_raw_emails(*args):
     sta, ids = imap_conn.search(None, '(HEADER Subject "{:s}")'.format(subject))
 
     # Gets raw emails
-    print("Reading emails")
+    logging.info("Reading emails")
     raw_emails = []
     for eid in ids[0].split():
         status, msg_data = imap_conn.fetch(eid, '(RFC822)')
@@ -101,7 +109,6 @@ def build_digest(*args):
     '''
     Builds digest.
     '''
-
     # Gets raw emails
     raw_emails = get_raw_emails(cfg, team)
 
@@ -121,8 +128,7 @@ def clean_digest(*args):
     '''
     Cleans digest.
     '''
-
-    print("Cleaning emails")
+    logging.info("Cleaning emails")
 
     # Cleans the digest by removing quoted lines, etc
     # !!! You may need to edit this method to adapt it to your needs !!!
@@ -139,8 +145,7 @@ def add_missing_members(team, digest):
     '''
     Adds indication of the members that didn't reply to the survey.
     '''
-
-    print("Adding missing members")
+    logging.info("Adding missing members")
     yesterday = datetime.datetime.today() - datetime.timedelta(days = 1)
     for member in team['members']:
         if (yesterday.strftime("%A") in member['availability'] and
@@ -186,7 +191,7 @@ if __name__ == '__main__':
                 yesterday.strftime('%d-%m-%Y'), team['team_name'])
 
         # Sends digest to team
-        print("Sending digest to team '{:s}'".format(team['team_name']))
+        logging.info("Sending digest to team '{:s}'".format(team['team_name']))
         members = [val for val in team['members']]
         members.append(team['team_leader'])
         for member in members:

@@ -1,11 +1,10 @@
-Hi {:s},
+Hi {},
 
-Reply to this email and tell us what you did today ({:s}). Your reply will be delivered tomorrow at {:s}.
+Reply to this email and tell us what you did today ({}). We will aggregate
+all team replies into one email and send them to you tomorrow morning.
 
 Notes:
-- It should be brief, preferably by items.
-- Refer any success or difficulty that you had.
-- Ideally takes less than 30 seconds to read and 8 minutes to write.
+- It should be brief amd only takes a few seconds to read.
 - If you send more than one reply, only the last one is considered.
 - Needs to be sent from the same email address where you received it.
 - Empty lines and lines starting with > are ignored.

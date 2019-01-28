@@ -24,15 +24,13 @@ The survey’s reply:
 
 1. Set up your SMTP and IMAP server by filling in the file `cfg.yml.EXAMPLE`.
 Then rename it as `cfg.yml`.
-2. For each team create a yaml file that follows the template's structure
+1. For each team create a yaml file that follows the template's structure
 defined in `templates/dev_team.yml.EXAMPLE`. Instead `dev_team` use the name
 of your team. In this file define each member's name, email and availability.
-3. Test if the files can be executed by running them directly (`./survey.py`
+1. Test if the files can be executed by running them directly (`./survey.py`
 and `./digest.py`). You may need to change its permissions by
-
   > `sudo chmod 755 survey.py digest.py`
-
-4. Now add two cronjobs, one for the survey and another for the digest.
+1. Now add two cronjobs, one for the survey and another for the digest.
 
   > crontab -e
 
